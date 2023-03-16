@@ -1,19 +1,21 @@
 package org.zerock.board.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
+//import java.text.DateFormat;
+//import java.text.SimpleDateFormat;
+//import java.util.ArrayList;
+//import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.zerock.board.service.BoardServiceImpl;
+import org.zerock.board.service.BoardService;
 import org.zerock.board.vo.BoardVO;
+import com.webjjang.util.PageObject;
+
 import lombok.extern.log4j.Log4j;
 
 /*
@@ -29,38 +31,39 @@ import lombok.extern.log4j.Log4j;
 public class BoardController {
 	
 	@Autowired
-	private BoardServiceImpl service;
+	@Qualifier("boardServiceImpl")
+	private BoardService service;
 	
 	@RequestMapping("/list.do")
-	public String list(Model model) {
+	// @ModelAttribute -> 전달 받은 parameter를 JSP까지 전달 해 준다. - Medel에 자동으로 담긴다.
+	public String list(@ModelAttribute("pageObject") PageObject pageObject, Model model) {
 		log.info("게시판 리스트");
 //		System.out.println(10/0);
-		model.addAttribute("list",service.list());
+		model.addAttribute("list",service.list(pageObject));
 		return "board/list";
 	}
 	
 	@RequestMapping("/view.do")
 	// 전달되는 변수로 받을 때는 한개씩 따로따로 받는다.
 	public String view(long no, int inc, Model model) {
-		log.info("게시판 보기");
-		BoardVO vo = service.view(no, inc);
 		
+		/* 더 쉬운 방법을 찾았으니 주석처리~_~
+		BoardVO vo = service.view(no, inc);
 		// Date타입의 date 변수에 vo에 있는 writeDate를 저장한다
 		// 현재 writeDate : Mon Feb 13 09:39:44 KST 2023 <- 이런형식
-		Date date = vo.getWriteDate();
-		
+		Date date = vo.getWriteDate();		
 		// DateFormat타입의 df변수에 yyyy-MM-dd 형식의 SimpleDateFormat을 저장한다
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");		
 		// String타입의 dateStr 변수에 vo에 객체에 저장되어 있던 writeDate를 yyyy-MM-dd의 형식으로 String 타입으로 저장한다.
-		String dateStr = df.format(date);
-		
+		String dateStr = df.format(date);		
 		// vo에 vo객체를 담고
-		model.addAttribute("vo",vo);
-		
+		model.addAttribute("vo",vo);		
 		// writeDate에 아까 "yyyy-MM-dd" 형식의 String 타입으로 저장한 writeDate를 담는다
-		model.addAttribute("writeDate",dateStr);
+		model.addAttribute("writeDate",dateStr);	
+		*/
 		
+		log.info("게시판 보기");
+		model.addAttribute("vo",service.view(no, inc));	
 		log.info("no="+no+", inc="+inc);
 		return "board/view";
 	}
@@ -75,21 +78,26 @@ public class BoardController {
 	public String write(BoardVO vo) {
 		log.info("게시판 글쓰기처리");
 		log.info(vo);
+		service.write(vo);
 		return "redirect:list.do";		
 	}
 	
 	@GetMapping("/update.do")
-	public String updateForm() {
+	public String updateForm(long no, Model model) {
 		log.info("게시판 수정폼");
+		model.addAttribute("vo", service.view(no, 0));
 		return "board/update";
 	}
 	
 	@PostMapping("/update.do")
-	public String update() {
+	public String update(BoardVO vo) {
 		log.info("게시판 수정처리");
-		return "redirect:view.do?no=10&inc=1";		
+		service.update(vo);
+		return "redirect:view.do?no="+vo.getNo()+"&inc=0";		
 	}
 	
+	
+	/* 연습용
 	@PostMapping("/delete.do")
 	// @RequestParam([name, defaultValue, required, value])
 	// - 넘어오는 데이터의 이름이 변수와 다른 경우, 값이 넘어오지 않는 경우 기본값, 필수 항목, 값 세팅
@@ -103,5 +111,13 @@ public class BoardController {
 		log.info(no);
 		return "redirect:list.do";
 	}
-
+	*/
+	
+	@PostMapping("/delete.do")
+	public String delete(BoardVO vo) {
+		log.info("게시판 삭제처리");
+		log.info(vo); // no, pw
+		service.delete(vo);
+		return "redirect:list.do";
+	}
 }

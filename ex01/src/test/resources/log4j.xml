@@ -10,6 +10,8 @@
 		</layout>
 	</appender>
 	
+	<!-- test용 log4j -->
+	
 	<!-- Application Loggers -->
 	<logger name="org.zerock.controller">
 		<level value="info" />
@@ -30,6 +32,18 @@
 
 	<logger name="org.springframework.web">
 		<level value="info" />
+	</logger>
+	
+	<logger name="jdbc.audit">
+		<level value="warn" />
+	</logger>
+	
+	<logger name="jdbc.resultset">
+		<level value="warn" />
+	</logger>
+	
+	<logger name="jdbc.connection">
+		<level value="warn" />
 	</logger>
 
 	<!-- Root Logger -->

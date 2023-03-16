@@ -11,9 +11,15 @@
 			FROM(
 				SELECT no, title, writer, writeDate, hit
 				FROM board
+				ORDER BY no DESC
 			)
 		)
-		WHERE rnum BETWEEN 1 and 10
+		WHERE rnum BETWEEN #{startRow} and #{endRow}
+	</select>
+	
+	<select id="getTotalRow" resultType="Long">
+		SELECT COUNT(*)
+		FROM board
 	</select>
 	
 	<select id="view" resultType="org.zerock.board.vo.BoardVO">
@@ -21,14 +27,25 @@
 		FROM board WHERE no = #{no}	
 	</select>
 	
+	<!-- 기본이 integer이기 때문에(n행이 업데이트 되었습니다.) resultType을 쓰지 않아도 된다. -->
 	<update id="increase">
 		UPDATE board SET hit = hit + 1
 		WHERE no = #{no}
 	</update>
 	
-	<select id="write" resultType="java.lang.Integer">
+	<insert id="write">
 		INSERT INTO board (no, title, content, writer, pw)
-		VALUES (board_seq.NEXTVAL, #{title}, #{content}, #{writer}, #{pw})
-	</select>
+		VALUES(board_seq.NEXTVAL, #{title}, #{content}, #{writer}, #{pw})
+	</insert>
+	
+	<update id="update">
+		UPDATE board SET title=#{title}, content=#{content}, writer=#{writer}
+		WHERE no = #{no} and pw = #{pw}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM board
+		WHERE no = #{no} and pw = #{pw}
+	</delete>
 	
 </mapper>

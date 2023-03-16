@@ -5,16 +5,37 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<h1>글쓰기폼</h1>
-	<form action="write.do" method="post">
-		제목 : <input name="title"><br/>
-		내용 : <textarea rows="5" name="content"></textarea><br/>
-		작성자 : <input name="writer"><br/>
-		비밀번호 : <input name="pw"><br/>
-		비밀번호 확인 : <input name="pw2"><br/>
-		<button>등록</button>
-	</form>
+	<div class="container">
+		<h1>글쓰기폼</h1>
+		<form action="write.do" method="post">
+			<div class="form-group">
+				<label>제목</label>
+				<input name="title" class="form-control">
+			</div>
+			<div class="form-group">
+				<label>내용</label>
+				<textarea rows="5" name="content" class="form-control"></textarea>
+			</div>
+			<div class="form-group">
+				<label>작성자</label>
+				<input name="writer" class="form-control">
+			</div>
+			<div class="form-group">
+				<label>비밀번호</label>
+				<input name="pw" class="form-control" type="password">
+			</div>
+			<div class="form-group">
+				<label>비밀번호 확인</label>
+				<input name="pw2" class="form-control" type="password">
+			</div>
+			<button>등록</button>
+		</form>
+	</div>
 </body>
 </html>
